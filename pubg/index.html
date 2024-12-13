@@ -3,60 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUBG 3D Model</title>
+    <title>Godzilla GLTF Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            color: #333;
+            overflow: hidden;
         }
-        header {
-            background-color: #222;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
-        .model-container {
-            padding: 50px 20px;
-            text-align: center;
-        }
-        .model-container img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .model-container h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-        .model-container p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        footer {
-            background-color: #222;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+        canvas {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>PUBG 3D Model Showcase</h1>
-    </header>
-    <section class="model-container">
-        <h1>PUBG Character Model</h1>
-        <img src="https://via.placeholder.com/800x600" alt="PUBG 3D Model">
-        <p>Explore this high-quality 3D model inspired by PUBG characters. Perfect for game design and animations.</p>
-        <button style="padding: 10px 20px; border: none; background: #ff7e5f; color: white; font-weight: bold; border-radius: 5px;">Download Now</button>
-    </section>
-    <footer>
-        <p>&copy; 2024 3D Models Marketplace. All rights reserved.</p>
-    </footer>
+    <script>
+        // Scene, Camera, and Renderer Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        scene.add(light);
+
+        const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+        scene.add(ambientLight);
+
+        // GLTFLoader
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'https://cdn3dmodels.vercel.app/pubg/scene.gltf',
+            (gltf) => {
+                scene.add(gltf.scene);
+                gltf.scene.scale.set(1, 1, 1); // Adjust scale as needed
+            },
+            (xhr) => {
+                console.log((xhr.loaded / xhr.total) * 100 + '% loaded'); // Progress
+            },
+            (error) => {
+                console.error('An error occurred:', error); // Error handling
+            }
+        );
+
+        // Camera Position
+        camera.position.z = 5;
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Design
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 </html>
